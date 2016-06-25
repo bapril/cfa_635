@@ -7,15 +7,15 @@ Early commit of a CFA 635 library for python. The goal is to create a fully even
   * The Main config file contains the following sections:
     1. verbosity: single value 0 for normal up to 5 for debug
     1. device: contains port and baudrate settings:
-      ```yaml
+```yaml
 port: /dev/cu.usbserial-CF003400
 baudrate: 115200
-       ```
+```
     1. root: Contains the defaults file, sudo code and starting item:
-      ```yaml
+```yaml
 defaults: config/defaults.conf
 item: s1
-      ```
+```
     1. items: Menu items, pages and lines.
   * The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
   * Menus
