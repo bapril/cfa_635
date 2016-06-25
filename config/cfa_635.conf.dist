@@ -1,0 +1,218 @@
+verbosity: 0
+device:
+  #port: /dev/ttyUSB0
+  port: /dev/cu.usbserial-CF003400
+  baudrate: 115200
+root:
+  defaults: config/defaults.conf
+  item: s1
+items:
+  s1:
+    type: page
+    line1: "#d016#d016#d016 ACME  CENTER #d017#d017#d017"
+    line2: "Version 0.1.0       "
+    line3: "2016-JUN-24         "
+    line4: 'bapril@gmail.com    '
+    led1: [0,0]
+    led2: [0,0]
+    led3: [0,0]
+    led4: [0,0]
+    cursor_style: 0
+    next: s2
+    pause: 0.250
+  s2:
+    type: page
+    led1: [25,0]
+    led2: [0,0]
+    led3: [0,0]
+    led4: [0,25]
+    next: s3
+    pause: 0.250
+  s3:
+    type: page
+    led1: [50,0]
+    led2: [25,0]
+    led3: [0,25]
+    led4: [0,50]
+    next: s4
+    pause: .250
+  s4:
+    type: page
+    led1: [75,0]
+    led2: [50,25]
+    led3: [25,50]
+    led4: [0,75]
+    next: s5
+    pause: 0.250
+  s5:
+    type: page
+    led1: [100,25]
+    led2: [75,50]
+    led3: [50,75]
+    led4: [25,100]
+    next: s6
+    pause: 0.250
+  s6:
+    type: page
+    led1: [75,50]
+    led2: [100,75]
+    led3: [75,100]
+    led4: [50,75]
+    next: s7
+    pause: 0.250
+  s7:
+    type: page
+    led1: [50,75]
+    led2: [75,100]
+    led3: [100,75]
+    led4: [75,50]
+    next: s8
+    pause: 0.250
+  s8:
+    type: page
+    led1: [25,100]
+    led2: [50,75]
+    led3: [75,50]
+    led4: [100,26]
+    next: s9
+    pause: 0.250
+  s9:
+    type: page
+    led1: [0,75]
+    led2: [25,50]
+    led3: [50,25]
+    led4: [75,0]
+    next: s10
+    pause: 0.250
+  s10:
+    type: page
+    led1: [100,0]
+    led2: [100,0]
+    led3: [100,0]
+    led4: [100,0]
+    pause: 0.250
+    next: main_menu
+  main_menu:
+    type: menu
+    title: "Main Menu"
+    first_line: about_page
+    endless: False
+    lines:
+      about_page:
+        line_text: "About"
+        next_line: setup_menu
+        action: about_page
+      setup_menu:
+        line_text: "Setup"
+        next_line: status_menu
+        action: setup_menu
+      status_menu:
+        line_text: "Status"
+        next_line: services_menu
+        action: status_menu
+      services_menu:
+        line_text: "Services"
+        next_line: admin_menu
+        action: services_menu
+      admin_menu:
+        line_text: "Admin Menu #d171"
+        action: admin_sudo
+  admin_sudo:
+    type: sudo
+    code: [1, 0, 32, 0, 8, 24, 16, 0, 4, 6, 4, 0]
+    next_action: about_page
+  about_page:
+    type: page_wait_for_input
+    line1: "#d016#d016#d016 ACME  CENTER #d017#d017#d017"
+    line2: "Version 0.1.0       "
+    line3: "2016-JUN-24         "
+    line4: 'bapril@gmail.com    '
+    next: main_menu
+    pause: 0.250
+  setup_menu:
+    type: menu
+    title: "Setup Menu"
+    first_line: service_config
+    endless: False
+    lines:
+      service_config:
+        line_text: "Service Config"
+        next_line: network_config
+        action: service_config_menu
+      network_config:
+        line_text: "Network Config"
+        next_line: screen_config
+        action: network_config_menu
+      screen_config:
+        line_text: "Screen Setup"
+        action: screen_config_menu
+  screen_config_menu:
+     type: menu
+     title: "Screen Config"
+     first_line: display_brightness_title
+     endless: False
+     lines:
+       display_brightness_title:
+         line_text: "Brightness:"
+         next_line: display_brightness_value
+       display_brightness_value:
+         line_type: value_bar_brightness
+         vbar_min: 0
+         vbar_max: 100
+         vbar_inc: 1
+         vbar_read: "./get_value.py brightness"
+         vbar_write: "./set_value.py brightness %v"
+         next_line: display_contrast_title
+       display_contrast_title:
+         line_text: "Contrast:"
+         next_line: display_contrast_value
+       display_contrast_value:
+         line_type: value_bar_contrast
+         vbar_min: 0
+         vbar_max: 255
+         vbar_inc: 4
+         vbar_read: "./get_value.py contrast"
+         vbar_write: "./set_value.py contrast %v"
+         next_line: display_timeout_title
+       display_timeout_title:
+         line_text: "Screen Timeout:"
+         next_line: display_timeout_value
+       display_timeout_value:
+         line_type: value_bar
+         vbar_min: 0
+         vbar_max: 255
+         vbar_inc: 25
+         vbar_read: "./get_value.py timeout"
+         vbar_write: "./set_value.py timeout %v"
+  status_menu:
+     type: menu
+     title: "System Status"
+     first_line: disk_free_slash
+     endless: True
+     lines:
+       disk_free_slash:
+         line_type: cmd_line
+         line_cmd: "df / -h | tail -1 | awk {'print \"Disk / Avail: \"$4'}"
+         next_line: uptime
+       uptime:
+         line_type: cmd_line
+         line_cmd: "uptime | sed -e \"s/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]//g\" | awk -F',' {'print \"Up: \"$1'}"
+         next_line: load_average
+       load_average:
+         line_type: cmd_line
+         line_cmd: "uptime | awk -F':' {'print \"LA: \"$4'}"
+         next_line: hostname
+       hostname:
+         line_cmd: "hostname"
+  services_menu:
+     type: service_menu
+     title: "Service Status"
+     endless: False
+     services:
+       ntp:
+       ssh:
+       rsyslog:
+       udev:
+       suricata:
+       cron:
+       dbus:
