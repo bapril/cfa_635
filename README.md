@@ -8,7 +8,7 @@ Early commit of a CFA 635 library for python. The goal is to create a fully even
   1. verbosity: single value 0 for normal up to 5 for debug
   1. device: contains port and baudrate settings:
 
- ```yaml
+  ```yaml
 device:
   port: /dev/cu.usbserial-CF003400
   baudrate: 115200
@@ -16,7 +16,7 @@ device:
 
   1. root: Contains the defaults file, sudo code and starting item:
 
- ```yaml
+  ```yaml
 root:
   defaults: config/defaults.conf
   item: s1
@@ -27,7 +27,7 @@ root:
   1. items: Menu items, pages and lines.
     * Menu: A menu is an ordered set of menu Lines. 
 
- ```yaml
+    ```yaml
 items:
   main_menu:
     type: menu #Tells the parser that we want a menu
