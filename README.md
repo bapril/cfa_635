@@ -4,9 +4,9 @@ Early commit of a CFA 635 library for python. The goal is to create a fully even
 
 ## Configuration:
 
-    * The Main config file contains the following sections:
-        1. verbosity: single value 0 for normal up to 5 for debug
-        1. device: contains port and baudrate settings:
+* The Main config file contains the following sections:
+  1. verbosity: single value 0 for normal up to 5 for debug
+  1. device: contains port and baudrate settings:
 
  ```yaml
 device:
@@ -14,7 +14,7 @@ device:
   baudrate: 115200
 ```
 
-        1. root: Contains the defaults file, sudo code and starting item:
+  1. root: Contains the defaults file, sudo code and starting item:
 
  ```yaml
 root:
@@ -22,10 +22,10 @@ root:
   item: s1
 ```
 
-        The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
+  The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
 
-        1. items: Menu items, pages and lines.
-            * Menu: A menu is an ordered set of menu Lines. 
+  1. items: Menu items, pages and lines.
+    * Menu: A menu is an ordered set of menu Lines. 
 
  ```yaml
 items:
