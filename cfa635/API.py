@@ -1,4 +1,3 @@
-#pylint: disable=R0904
 """ Module containing functions for every activity availiable in the CFA635 API
 """
 from cfa635.Packet import Packet
@@ -89,7 +88,6 @@ class API:
     def set_cg_data(self, index, data):
         """ #9 (0x09): Set LCD Special Character Data
         """
-        #TODO validate type of data
         if len(data) != 8:
             raise Exception("Data should be 8 bytes")
 

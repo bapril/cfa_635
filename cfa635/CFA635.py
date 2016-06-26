@@ -9,7 +9,7 @@ from cfa635.Sudo import Sudo
 
 import os
 
-class Item:
+class Item(object): # pylint: disable=R0903
     """
     Generic container class for items/actions
     Anything that can be done/displayed on a
@@ -44,10 +44,10 @@ class Item:
             elif self.item['type'] == 'sudo':
                 sudo_menu = Sudo(self.cfg, self.item)
                 if sudo_menu.run(cfa) == True:
-                    item = Item(self.cfg,self.item['next_action'])
+                    item = Item(self.cfg, self.item['next_action'])
                     item.render(cfa)
             else:
-                raise Exception("Item Type is Unknown. ",self.item['type'])
+                raise Exception("Item Type is Unknown. ", self.item['type'])
         else:
             raise Exception("Item has no Type")
 
@@ -57,7 +57,7 @@ class Item:
         self.cfg = cfg
         return None
 
-class Menu:
+class Menu(object):
     """
     Menu generator module for the CFA635 LCD system
     """
@@ -215,23 +215,22 @@ class Menu:
         Given an line config,
         render/find/generate/calculate the text to appear
         """
-	if 'line_type' in line:
+        if 'line_type' in line:
             print "Line Type: "+line['line_type']
-	    return "Type: "+line['line_type']
+            return "Type: "+line['line_type']
         elif 'line_text' in line:
             return self.cfa_bs.pad(line['line_text'], 20)
         elif 'line_cmd' in line:
             text = os.popen(line['line_cmd']).read().rstrip()
             return self.cfa_bs.pad(text, 20)
         else:
-            print "HELP"
-	    return "help"
+            return "help"
 
     def process_key(self, cfa, key):
         """ Handle key press
         """
-        #TODO Map row to Line, pass key, act accordingly
-        (action_taken,next_action) = self.line_list[self.state['cursor_index']].process_key(key, cfa)
+        action_taken, next_action = \
+            self.line_list[self.state['cursor_index']].process_key(key, cfa)
         if action_taken == True:
             #Item took the keypress,
             if next_action != None:
@@ -243,7 +242,7 @@ class Menu:
                 item = Item(self.cfg, next_action)
                 item.render(cfa)
                 self.state['title_sent'] = False
-            return(False,False)
+            return(False, False)
         else:
             #The item does not want this keypress, we handle it.
             if key:
@@ -277,7 +276,7 @@ class Menu:
         """
         (term, redraw) = self.process_key(cfa, key)
         if term == True:
-          return False
+            return False
 
         if 'title' in self.menu:
             if self.state['title_sent'] == False:
@@ -294,11 +293,11 @@ class Menu:
                 self.cfa_bs.render(self.get_scroll_indicator()))
 
             #present lines
-            self.line_list[self.state['view_index']].render(1,cfa)
+            self.line_list[self.state['view_index']].render(1, cfa)
             if len(self.line_list) > 1:
-                self.line_list[self.state['view_index'] + 1].render(2,cfa)
+                self.line_list[self.state['view_index'] + 1].render(2, cfa)
                 if len(self.line_list) > 2:
-                    self.line_list[self.state['view_index'] + 2].render(3,cfa)
+                    self.line_list[self.state['view_index'] + 2].render(3, cfa)
                 else:
                     cfa.api.set_text(3, 0, self.cfa_bs.pad(" ", 20))
             else:
@@ -322,13 +321,6 @@ class Menu:
         self.cfa_bs = ByteString()
         return None
 
-"""
-Functions for support of linux service menus.
-"""
-from cfa635.ByteString import ByteString
-from cfa635.CFA635 import Menu
-import os
-
 class ServiceMenu(Menu):
     """
     Generate a menu based on running services
@@ -340,5 +332,9 @@ class ServiceMenu(Menu):
         """
         self.line_list = [] #It's important to re-zero before loading
         for service in self.menu['services']:
-          i = ServiceLine(service)
-          self.line_list.append(i.route())
+            i = ServiceLine(service)
+            self.line_list.append(i.route())
+
+    def __init__(self, cfg, menu):
+        super(ServiceMenu, self).__init__(cfg, menu)
+        return None

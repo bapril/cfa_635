@@ -25,11 +25,11 @@ class Sudo:
             self.render(cfa)
             if self.code_index == self.code_len:
                 return self.success
-            (now,_press,_release) = cfa.api.read_keypad()
+            (now, _press, _release) = cfa.api.read_keypad()
             key = ord(now)
             if key != key_last:
                 if self.code[self.code_index] != key:
-                  self.success = False
+                    self.success = False
                 self.code_index += 1
                 key_last = key
 
@@ -63,9 +63,7 @@ class Sudo:
 
         return True
 
-    def __init__ (self, cfg, menu):
-        self.menu = menu
-        self.cfg = cfg
+    def __init__ (self, _cfg, menu):
         self.setup = False
         self.cfa_bs = ByteString()
         self.code = menu['code']

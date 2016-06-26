@@ -29,9 +29,10 @@ class Device:
 
         try:
             self.serial.open()
-        except:
+        except serial.SerialException:
             print("Unexpected error:", sys.exc_info()[0])
-#            raise
+        except Exception:
+            raise
 
         if self.serial.readable() != True:
             print "Serial port not readable"
