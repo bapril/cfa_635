@@ -1,4 +1,4 @@
-# CFA-635 Event driven meny system
+# CFA-635 Event driven menu system
 
 Early commit of a CFA 635 library for python. The goal is to create a fully event-driven menu system that's simple to use and powerful.
 
