@@ -191,7 +191,7 @@ class ValueBar(Line):
         """
         cmd = self.line['vbar_write']
         cmd = cmd.replace('%v', str(self.value))
-        self.value = os.system(cmd)
+        os.system(cmd)
 
     def __init__ (self, line):
         super(ValueBar, self).__init__(line)
