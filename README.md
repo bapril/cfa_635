@@ -1,32 +1,33 @@
-# CFA-635 Event driven meny system
+# CFA-635 Event driven menu system
 
 Early commit of a CFA 635 library for python. The goal is to create a fully event-driven menu system that's simple to use and powerful.
 
 ## Configuration:
 
-  * The Main config file contains the following sections:
-    1. verbosity: single value 0 for normal up to 5 for debug
-    1. device: contains port and baudrate settings:
+* The Main config file contains the following sections:
+  1. verbosity: single value 0 for normal up to 5 for debug
+  1. device: contains port and baudrate settings:
 
-```yaml
+  ```yaml
 device:
   port: /dev/cu.usbserial-CF003400
   baudrate: 115200
 ```
 
-    1. root: Contains the defaults file, sudo code and starting item:
+  1. root: Contains the defaults file, sudo code and starting item:
 
-```yaml
+  ```yaml
 root:
   defaults: config/defaults.conf
   item: s1
 ```
 
-    1. items: Menu items, pages and lines.
-  * The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
+  The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
+
+  1. items: Menu items, pages and lines.
     * Menu: A menu is an ordered set of menu Lines. 
 
-```yaml
+    ```yaml
 items:
   main_menu:
     type: menu #Tells the parser that we want a menu
@@ -46,7 +47,7 @@ items:
     * Lines: Lines are menu items. Each type of line supports a different behavior.
       * Line: The basic line class displays a `line_text` and excutes the item `action` when selected. 
 
-```yaml
+      ```yaml
    status_menu:
      line_text: "Status"
      next_line: services_menu
@@ -55,7 +56,7 @@ items:
 
       * CmdLine: Command Lines display the output of a shell command as their text. Remember you only have 20 chars to work with. 
 
-```yaml
+      ```yaml
    disk_free_slash:
      line_type: cmd_line
      line_cmd: "df / -h | tail -1 | awk {'print \"Disk / Avail: \"$4'}"
@@ -64,7 +65,7 @@ items:
 
       * ValueBar: When selected the user can move right/up or left/down to adjust the value of the bar. Enter will save the value, exit will abort. The value is set at display time with vbar_read, and saved with vbar_write. `%v` is replace with the value. 
 
-```yaml
+      ```yaml
      lines:
        display_timeout_title:
          line_text: "Screen Timeout:"
@@ -80,7 +81,7 @@ items:
 
       * ValueBarBrightness: Much like ValueBar, but this version updates the brightness of the screen as the value changes. 
 
-```yaml
+      ```yaml
      lines:
        display_timeout_title:
          line_text: "Screen Timeout:"
@@ -93,7 +94,7 @@ items:
 
       * ValueBarContrast: Much like ValueBar however this version updates the screen contrast as the value changes. 
 
-```yaml
+      ```yaml
      lines:
        display_contrast_title:
          line_text: "Contrast:"
@@ -105,9 +106,9 @@ items:
          next_line: display_timeout_title
 ```
 
-    * Pages: A set of static content that is displayed on the LCD screen. Pages can also drive the LEDs as well brightness and contrast. This page will set 4 lines of text, make all 4 LEDs green and wait for input before executing the item main_menu
+      * Pages: A set of static content that is displayed on the LCD screen. Pages can also drive the LEDs as well brightness and contrast. This page will set 4 lines of text, make all 4 LEDs green and wait for input before executing the item main_menu
 
-```yaml
+      ```yaml
   about_page:
     type: page_wait_for_input
     line1: "#d016#d016#d016 ACME  CENTER #d017#d017#d017"
