@@ -123,7 +123,7 @@ class ValueBar(Line):
         """
         self.row = row
         self.cfa = cfa
-        size = 19
+        size = 18
         text = " " + self.cfa_bs.pad(str(self.value), 3) + " : "
         size = size - len(text)
         bar_string = self.generate_bar(size)
@@ -227,10 +227,10 @@ class ValueBarContrast(ValueBar):
         self.render(self.row, cfa)
 
     def __init__ (self, line):
+        line['vbar_max'] = 255
+        line['vbar_min'] = 0
+        line['vbar_inc'] = 4
         super(ValueBarContrast, self).__init__(line)
-        self.max = 255
-        self.min = 0
-        self.inc = 4
         self.get_value()
         return None
 
@@ -260,10 +260,10 @@ class ValueBarBrightness(ValueBar):
         self.render(self.row, cfa)
 
     def __init__ (self, line):
+        line['vbar_max'] = 100
+        line['vbar_min'] = 0
+        line['vbar_inc'] = 2
         super(ValueBarBrightness, self).__init__(line)
-        self.max = 100
-        self.min = 0
-        self.inc = 2
         self.get_value()
         return None
 

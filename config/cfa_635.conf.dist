@@ -157,9 +157,6 @@ items:
          next_line: display_brightness_value
        display_brightness_value:
          line_type: value_bar_brightness
-         vbar_min: 0
-         vbar_max: 100
-         vbar_inc: 1
          vbar_read: "./get_value.py brightness"
          vbar_write: "./set_value.py brightness %v"
          next_line: display_contrast_title
@@ -168,9 +165,6 @@ items:
          next_line: display_contrast_value
        display_contrast_value:
          line_type: value_bar_contrast
-         vbar_min: 0
-         vbar_max: 255
-         vbar_inc: 4
          vbar_read: "./get_value.py contrast"
          vbar_write: "./set_value.py contrast %v"
          next_line: display_timeout_title
