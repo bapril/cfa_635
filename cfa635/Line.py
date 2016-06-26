@@ -69,6 +69,16 @@ class CmdLine(Line):
     This Line type uses the stdout of a command
     to generate the line text
     """
+    def render(self, row, cfa):
+        """
+        Execute the command and render the line text
+        """
+        self.row = row
+        self.cfa = cfa
+        text = os.popen(self.line['line_cmd']).read().rstrip()
+        text = self.cfa_bs.pad(text, 20)
+        self.cfa.api.set_text(self.row, 0, text)
+
     def __init__ (self, line):
         super(CmdLine, self).__init__(line)
         return None

@@ -203,6 +203,7 @@ items:
          line_cmd: "uptime | awk -F':' {'print \"LA: \"$4'}"
          next_line: hostname
        hostname:
+         line_type: cmd_line
          line_cmd: "hostname"
   services_menu:
      type: service_menu

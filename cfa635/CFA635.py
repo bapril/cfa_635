@@ -7,8 +7,6 @@ from cfa635.Line import Line
 from cfa635.Line import ServiceLine
 from cfa635.Sudo import Sudo
 
-import os
-
 class Item(object): # pylint: disable=R0903
     """
     Generic container class for items/actions
@@ -220,11 +218,8 @@ class Menu(object):
             return "Type: "+line['line_type']
         elif 'line_text' in line:
             return self.cfa_bs.pad(line['line_text'], 20)
-        elif 'line_cmd' in line:
-            text = os.popen(line['line_cmd']).read().rstrip()
-            return self.cfa_bs.pad(text, 20)
         else:
-            return "help"
+            raise Exception("Cannot determine line type.")
 
     def process_key(self, cfa, key):
         """ Handle key press
