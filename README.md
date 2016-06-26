@@ -7,6 +7,7 @@ Early commit of a CFA 635 library for python. The goal is to create a fully even
   * The Main config file contains the following sections:
     1. verbosity: single value 0 for normal up to 5 for debug
     1. device: contains port and baudrate settings:
+
 ```yaml
 device:
   port: /dev/cu.usbserial-CF003400
@@ -14,6 +15,7 @@ device:
 ```
 
     1. root: Contains the defaults file, sudo code and starting item:
+
 ```yaml
 root:
   defaults: config/defaults.conf
@@ -23,6 +25,7 @@ root:
     1. items: Menu items, pages and lines.
   * The Defaults config file contains values that can be changed by users via the cfa635, for example brightness, contrast, and screen timeout.  see the defaults.conf.dist for an example.
     * Menu: A menu is an ordered set of menu Lines. 
+
 ```yaml
 items:
   main_menu:
@@ -39,26 +42,71 @@ items:
         line_text: "Admin Menu #d171"
         action: admin_menu
 ```
+
     * Lines: Lines are menu items. Each type of line supports a different behavior.
       * Line: The basic line class displays a `line_text` and excutes the item `action` when selected. 
+
 ```yaml
    status_menu:
      line_text: "Status"
      next_line: services_menu
      action: status_menu
 ```
+
       * CmdLine: Command Lines display the output of a shell command as their text. Remember you only have 20 chars to work with. 
+
 ```yaml
    disk_free_slash:
      line_type: cmd_line
      line_cmd: "df / -h | tail -1 | awk {'print \"Disk / Avail: \"$4'}"
      next_line: uptime
 ```
-      * ValueBar:
-      * ValueBarBrightness:
-      * ValueBarContrast:
+
+      * ValueBar: When selected the user can move right/up or left/down to adjust the value of the bar. Enter will save the value, exit will abort. The value is set at display time with vbar_read, and saved with vbar_write. `%v` is replace with the value. 
+
+```yaml
+     lines:
+       display_timeout_title:
+         line_text: "Screen Timeout:"
+         next_line: display_timeout_value
+       display_timeout_value:
+         line_type: value_bar
+         vbar_min: 0
+         vbar_max: 255
+         vbar_inc: 25
+         vbar_read: "./get_value.py timeout"
+         vbar_write: "./set_value.py timeout %v"
+```
+
+      * ValueBarBrightness: Much like ValueBar, but this version updates the brightness of the screen as the value changes. 
+
+```yaml
+     lines:
+       display_timeout_title:
+         line_text: "Screen Timeout:"
+         next_line: display_timeout_value
+       display_timeout_value:
+         line_type: value_bar
+         vbar_read: "./get_value.py timeout"
+         vbar_write: "./set_value.py timeout %v"
+```
+
+      * ValueBarContrast: Much like ValueBar however this version updates the screen contrast as the value changes. 
+
+```yaml
+     lines:
+       display_contrast_title:
+         line_text: "Contrast:"
+         next_line: display_contrast_value
+       display_contrast_value:
+         line_type: value_bar_contrast
+         vbar_read: "./get_value.py contrast"
+         vbar_write: "./set_value.py contrast %v"
+         next_line: display_timeout_title
+```
 
     * Pages: A set of static content that is displayed on the LCD screen. Pages can also drive the LEDs as well brightness and contrast. This page will set 4 lines of text, make all 4 LEDs green and wait for input before executing the item main_menu
+
 ```yaml
   about_page:
     type: page_wait_for_input
@@ -72,7 +120,6 @@ items:
     led4: [100,0]
     next: main_menu
 ```
-
 
 ## References:
  1. http://www.crystalfontz.com/products/document/1/CFA_635_1_0.pdf
