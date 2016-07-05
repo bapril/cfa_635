@@ -26,6 +26,8 @@ class Line(object):
                 return ValueBarBrightness(self.line)
             elif self.line['line_type'] == 'cmd_line':
                 return CmdLine(self.line)
+            elif self.line['line_type'] == 'select_line':
+                return SelectLine(self.line)
         return self
 
     def render(self, row, cfa):
@@ -285,4 +287,106 @@ class ServiceLine(Line):
     def __init__ (self, service):
         super(ServiceLine, self).__init__(service)
         self.service = service
+        return None
+
+class SelectLine(Line):
+    """
+    A Select Style input field. options are provided in the "options" keyword
+    The selected option will replace the %v in the command provided by the
+    "select_cmd" keyword
+    """
+
+    i = 0
+    state = 'select'
+    value = None
+    max_len = 0
+
+    def render(self, row, cfa):
+        """
+        Render the line text
+        """
+        self.row = row
+        self.cfa = cfa
+        text = self.line['line_text'] + " [" + self.cfa_bs.pad(str(self.value), self.max_len) + "] "
+        self.cfa.api.set_text(self.row, 0, self.cfa_bs.render(text))
+
+    def increment(self, cfa):
+        """
+        User increased the value, update display
+        """
+        if self.i >= (len(self.line['options']) - 1):
+            self.i = 0
+        else:
+            self.i = self.i + 1
+        self.value = self.line['options'][self.i]
+        self.render(self.row, cfa)
+
+    def decrement(self, cfa):
+        """
+        User decreased the value, update display
+        """
+        if self.i == 0:
+            self.i = (len(self.line['options']) - 1)
+        else:
+            self.i = self.i - 1
+        self.value = self.line['options'][self.i]
+        self.render(self.row, cfa)
+
+    def process_key(self, key, cfa):
+        """
+        Result is in the following tuple:
+        {action_taken: bool, new_action:string}
+        action_taken will be true if we did something and the parent is done.
+        new_action is an action we are asking parent to take.
+        the cmd described by select_current_cmd should return the current value.
+        """
+        if self.state == 'select':
+            if key == cfa.KEY_RIGHT or key == cfa.KEY_OK:
+                cfa.api.set_cursor_style(cfa.CURSOR_INV_BLINK_UNDER)
+                self.state = 'edit'
+                return (True, None)
+        elif self.state == 'edit':
+            if key == cfa.KEY_UP or key == cfa.KEY_RIGHT:
+                self.increment(cfa)
+                return (True, None)
+            elif key == cfa.KEY_LEFT or key == cfa.KEY_DOWN:
+                self.decrement(cfa)
+                return (True, None)
+            elif key == cfa.KEY_STOP:
+                self.get_value()
+                self.state = 'select'
+                cfa.api.set_cursor_style(cfa.CURSOR_NO)
+                return (True, None)
+            elif key == cfa.KEY_OK:
+                self.set_value()
+                self.state = 'select'
+                cfa.api.set_cursor_style(cfa.CURSOR_NO)
+                return (True, None)
+        return (False, None)
+
+    def get_value(self):
+        """
+        Get the value for this field using the select_current_cmd.
+        """
+        cmd = self.line['select_current_cmd']
+        self.value = os.popen(cmd).read().rstrip()
+        self.i = self.line['options'].index(self.value)
+
+    def set_value(self):
+        """
+        Set the value for this filed with the provided command.
+        """
+        cmd = self.line['select_cmd']
+        cmd = cmd.replace('%v', str(self.value))
+        os.system(cmd)
+
+    def __init__ (self, line):
+        super(SelectLine, self).__init__(line)
+        self.i = 0
+        self.value = None
+        self.max_len = 0
+        for x in self.line['options']:
+            if len(x) > self.max_len:
+                self.max_len = len(x)
+        self.get_value()
         return None

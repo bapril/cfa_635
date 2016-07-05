@@ -120,7 +120,19 @@ items:
   admin_sudo:
     type: sudo
     code: [1, 0, 32, 0, 8, 24, 16, 0, 4, 6, 4, 0]
-    next_action: about_page
+    next_action: admin_menu
+  admin_menu:
+    type: menu
+    title: "Admin Menu"
+    first_line: ip_mode_select
+    endless: False
+    lines:
+      ip_mode_select:
+        line_text: "IP Mode:"
+        line_type: select_line
+        options: [prod, open, eng]
+        select_cmd: "echo \"%v\" > /tmp/mode"
+        select_current_cmd: "cat /tmp/mode"
   about_page:
     type: page_wait_for_input
     line1: "#d016#d016#d016 ACME  CENTER #d017#d017#d017"
