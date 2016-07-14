@@ -12,7 +12,7 @@ class Controller:
     dev = None
     backlight_set = 0
     backlight_current = 0
-    LED_Callback = None
+    led_callback = None
 
     KEY_UP     = 0x01
     KEY_OK     = 0x02
@@ -35,8 +35,8 @@ class Controller:
     def flush_key_input(self):
         """ Take input from keypad and ignore
         """
-        if self.LED_Callback != None:
-            self.LED_Callback.update()
+        if self.led_callback != None:
+            self.led_callback.update()
         self.api.read_keypad()
 
     def wait_for_input(self, timeout):
@@ -45,8 +45,8 @@ class Controller:
             returns True/False Did we get input.
         """
         while True:
-            if self.LED_Callback != None:
-                self.LED_Callback.update()
+            if self.led_callback != None:
+                self.led_callback.update()
                 time.sleep(0.05)
             else:
                 time.sleep(0.1)
@@ -61,8 +61,8 @@ class Controller:
         """ Timeout limited input request. Returns keycode currently pressed.
         """
         while True:
-            if self.LED_Callback != None:
-                self.LED_Callback.update()
+            if self.led_callback != None:
+                self.led_callback.update()
                 time.sleep(0.05)
             else:
                 time.sleep(0.1)
@@ -73,16 +73,19 @@ class Controller:
             if timeout < 1:
                 return (False, None)
 
-    def register_led_callback(self,callback):
-        self.LED_Callback = callback
+    def register_led_callback(self, callback):
+        """
+        On setup, we need to capture a callback for the LEDs.
+        """
+        self.led_callback = callback
 
     def sleep_wait_for_input(self):
         """ Long slow wait for input.
             To be used after screen has gone to sleep.
         """
         while True:
-            if self.LED_Callback != None:
-                self.LED_Callback.update()
+            if self.led_callback != None:
+                self.led_callback.update()
                 time.sleep(.24)
             else:
                 time.sleep(.25)

@@ -10,6 +10,9 @@ import re
 ON_POSIX = 'posix' in sys.builtin_module_names
 
 class LED(object):
+    """
+    Manage a single LED by watching a process for status change.
+    """
     def __init__(self, led, cfa, config):
         self.led = led - 1
         self.config = config
@@ -18,7 +21,11 @@ class LED(object):
         self.green = 0
         self.cfa.set_led(self.led, self.green, self.red)
         args = shlex.split(self.config['command'])
-        self.process = subprocess.Popen(args, bufsize=1, stdout=subprocess.PIPE, close_fds=ON_POSIX)
+        self.process = subprocess.Popen(
+          args,
+          bufsize=1,
+          stdout=subprocess.PIPE,
+          close_fds=ON_POSIX)
         self.queue = None
         self.last_queue = None
         self.queue_thread = Thread(target=self.queue_input)
@@ -26,6 +33,9 @@ class LED(object):
         self.queue_thread.start()
 
     def queue_input(self):
+        """
+        Poll the process for input, pass changes into the queue.
+        """
         while self.process.poll() is None:
             line = self.process.stdout.readline()
             out = line.rstrip()
@@ -33,19 +43,22 @@ class LED(object):
                 self.queue = out
 
     def update(self):
+        """
+        Update the LED if we have anyhthing new in our queue.
+        """
         if self.queue != self.last_queue:
             if self.queue == "OFF":
-                self.cfa.set_led(self.led,0,0)
+                self.cfa.set_led(self.led, 0, 0)
             elif self.queue == "RED":
-                self.cfa.set_led(self.led,0,100)
+                self.cfa.set_led(self.led, 0, 100)
             elif self.queue == "GREEN":
-                self.cfa.set_led(self.led,100,0)
+                self.cfa.set_led(self.led, 100, 0)
             elif self.queue == "YELLOW":
-                self.cfa.set_led(self.led,50,100)
+                self.cfa.set_led(self.led, 50, 100)
             elif self.queue == "ORANGE":
-                self.cfa.set_led(self.led,100,100)
+                self.cfa.set_led(self.led, 100, 100)
             else:
-                args = re.findall('^(\d+):(\d+)$',self.queue)
-                for ar in args:
-                    self.cfa.set_led(self.led,int(ar[0]),int(ar[1]))
+                args = re.findall('^(\d+):(\d+)$', self.queue)
+                for arg in args:
+                    self.cfa.set_led(self.led, int(arg[0]), int(arg[1]))
             self.last_queue = self.queue
