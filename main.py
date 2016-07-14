@@ -7,6 +7,7 @@ import sys, getopt, yaml
 from cfa635.Device import Device
 from cfa635.Controller import Controller
 from cfa635.CFA635 import Item
+from cfa635.LEDSet import LEDSet
 
 
 def usage():
@@ -69,6 +70,8 @@ def main(argv):
         print "Starting LCD Interface:"
     dev = Device(cfg)
     cfa = Controller(dev)
+    led = LEDSet(cfa,cfg)
+    cfa.register_led_callback(led)
 
     with open(cfg['root']['defaults'], 'r') as ymlfile:
         def_cfg = yaml.load(ymlfile)

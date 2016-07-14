@@ -12,6 +12,7 @@ class Controller:
     dev = None
     backlight_set = 0
     backlight_current = 0
+    LED_Callback = None
 
     KEY_UP     = 0x01
     KEY_OK     = 0x02
@@ -34,6 +35,8 @@ class Controller:
     def flush_key_input(self):
         """ Take input from keypad and ignore
         """
+        if self.LED_Callback != None:
+            self.LED_Callback.update()
         self.api.read_keypad()
 
     def wait_for_input(self, timeout):
@@ -42,10 +45,13 @@ class Controller:
             returns True/False Did we get input.
         """
         while True:
-            time.sleep(0.1)
+            if self.LED_Callback != None:
+                self.LED_Callback.update()
+                time.sleep(0.05)
+            else:
+                time.sleep(0.1)
             (now, _press, _release) = self.api.read_keypad()
             if ord(now) != 0:
-                print "Key Pressed", ord(now)
                 return True
             timeout -= 1
             if timeout < 1:
@@ -55,24 +61,33 @@ class Controller:
         """ Timeout limited input request. Returns keycode currently pressed.
         """
         while True:
-            time.sleep(0.1)
+            if self.LED_Callback != None:
+                self.LED_Callback.update()
+                time.sleep(0.05)
+            else:
+                time.sleep(0.1)
             (now, _press, _release) = self.api.read_keypad()
             if ord(now) != 0:
-                print "Key Pressed", ord(now)
                 return (True, ord(now))
             timeout -= 1
             if timeout < 1:
                 return (False, None)
+
+    def register_led_callback(self,callback):
+        self.LED_Callback = callback
 
     def sleep_wait_for_input(self):
         """ Long slow wait for input.
             To be used after screen has gone to sleep.
         """
         while True:
-            time.sleep(.25)
+            if self.LED_Callback != None:
+                self.LED_Callback.update()
+                time.sleep(.24)
+            else:
+                time.sleep(.25)
             (now, _press, _release) = self.api.read_keypad()
             if ord(now) != 0:
-                print "Key Pressed", ord(now)
                 return True
 
     def set_led (self, row, green, red):
