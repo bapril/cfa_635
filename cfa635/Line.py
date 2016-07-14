@@ -307,7 +307,8 @@ class SelectLine(Line):
         """
         self.row = row
         self.cfa = cfa
-        text = self.line['line_text'] + " [" + self.cfa_bs.pad(str(self.value), self.max_len) + "] "
+        text = self.line['line_text']
+        text += " [" + self.cfa_bs.pad(str(self.value), self.max_len) + "] "
         self.cfa.api.set_text(self.row, 0, self.cfa_bs.render(text))
 
     def increment(self, cfa):
@@ -385,8 +386,8 @@ class SelectLine(Line):
         self.i = 0
         self.value = None
         self.max_len = 0
-        for x in self.line['options']:
-            if len(x) > self.max_len:
-                self.max_len = len(x)
+        for index in self.line['options']:
+            if len(index) > self.max_len:
+                self.max_len = len(index)
         self.get_value()
         return None
